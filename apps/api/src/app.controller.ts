@@ -9,4 +9,8 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+  @Get('health')
+  health() {
+    return { ok: true, service: 'po-copilot-api', ts: new Date().toISOString() };
+  }
 }
