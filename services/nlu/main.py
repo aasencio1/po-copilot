@@ -53,4 +53,9 @@ def analyze(req: AnalyzeRequest):
             "moscow_must": ["seguridad"] if "seguro" in full else []
         }
     }
+
+@app.post("/generate")
+def generate():
+     return {"entre": True, "service": "po-copilot-nlu"}
+
 #Test
