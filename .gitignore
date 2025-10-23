@@ -24,3 +24,8 @@ Thumbs.db
 # IDEs
 .vscode/
 .idea/
+
+/apps/api/dist/
+/services/nlu/__pycache__/
+*.tsbuildinfo
+*.pyc
