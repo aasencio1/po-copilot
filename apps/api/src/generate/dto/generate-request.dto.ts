@@ -1,25 +1,38 @@
-import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
+// src/generate/dto/generate-request.dto.ts
+import { IsArray, IsIn, IsNotEmpty, IsString, ValidateNested, ArrayMinSize } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class NoteDto {
-  @IsString() id: string;
-  @IsString() speaker: 'user' | 'po' | 'client';
-  @IsString() language: 'en' | 'es';
-  @IsString() text: string;
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+
+  @IsIn(['client', 'po', 'user', 'dev'])
+  speaker: string;
+
+  @IsIn(['es', 'en'])
+  language: string;
+
+  @IsString()
+  @IsNotEmpty()
+  text: string;
 }
 
 export class GenerateRequestDto {
-  // --- Día 3 ---
-  @IsOptional() @IsString() productName?: string;
-  @IsOptional() @IsString() domain?: string;
-  @IsOptional() @IsString() persona?: string;
+  @IsString()
+  @IsNotEmpty()
+  productName: string;
 
-  // --- Día 2 ---
-  @IsOptional() @IsString() language?: string;
-  @IsOptional() @IsString() industry?: string;
-  @IsOptional() @IsString() project?: string;
+  @IsString()
+  @IsNotEmpty()
+  domain: string;
+
+  @IsString()
+  @IsNotEmpty()
+  persona: string;
 
   @IsArray()
+  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => NoteDto)
   notes: NoteDto[];

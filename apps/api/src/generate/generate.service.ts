@@ -1,4 +1,5 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+// src/generate/generate.service.ts
+import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { GenerateRequestDto } from './dto/generate-request.dto';
@@ -11,39 +12,31 @@ type Canonical = {
 };
 
 function normalize(dto: GenerateRequestDto): Canonical {
-  // Si llega formato día 3, úsalo
-  if (dto.productName || dto.domain || dto.persona) {
-    return {
-      product_name: dto.productName ?? '',
-      domain: dto.domain ?? '',
-      persona: dto.persona ?? '',
-      notes: dto.notes ?? [],
-    };
-  }
-  // Compatibilidad con día 2
+  // ✅ Día 3 solamente: NO uses project/industry/language
   return {
-    product_name: dto.project ?? '',
-    domain: dto.industry ?? '',
-    // Ajusta esta derivación si tienes una regla distinta
-    persona: dto.language ? (dto.language === 'es' ? 'po' : 'user') : 'po',
-    notes: dto.notes ?? [],
+    product_name: dto.productName,
+    domain: dto.domain,
+    persona: dto.persona,
+    notes: dto.notes,
   };
 }
 
 @Injectable()
 export class GenerateService {
   private readonly logger = new Logger(GenerateService.name);
-  private readonly url = 'http://localhost:8001/generate'; // asegúrate de 8001
+  private readonly baseURL =
+    process.env.NLU_URL ?? 'http://127.0.0.1:8001';
 
   constructor(private readonly http: HttpService) {}
 
   async generate(dto: GenerateRequestDto) {
     const payload = normalize(dto);
-    this.logger.debug({ outgoingPayload: payload });
+    const url = `${this.baseURL}/generate`;
+    this.logger.debug({ outgoingPayload: payload, url });
 
     try {
       const { data } = await firstValueFrom(
-        this.http.post(this.url, payload, {
+        this.http.post(url, payload, {
           headers: { 'Content-Type': 'application/json' },
           timeout: 10000,
         }),

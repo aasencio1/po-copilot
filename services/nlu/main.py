@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from pydantic import BaseModel
 from typing import List, Optional, Literal
 
@@ -16,7 +16,18 @@ class AnalyzeRequest(BaseModel):
     notes: List[RawNote]
     documents: Optional[List[dict]] = None
 
-app = FastAPI()
+class GenerateRequest(BaseModel):
+    product_name: str
+    domain: str
+    persona: str
+    notes: List[RawNote]
+
+class GenerateResponse(BaseModel):
+    entre: bool
+    service: str
+    
+app = FastAPI(title="Po-Copilot NLU", version="1.0.0")
+
 
 @app.get("/health")
 def health():
@@ -54,8 +65,14 @@ def analyze(req: AnalyzeRequest):
         }
     }
 
-@app.post("/generate")
-def generate():
-     return {"entre": True, "service": "po-copilot-nlu"}
+@app.post("/generate", response_model=GenerateResponse, status_code=status.HTTP_201_CREATED)
+def generate(req: GenerateRequest):
+    # (Aquí iría tu lógica real; por ahora, demo)
+    return {"entre": True, "service": "po-copilot-nlu"}
+
+
+#@app.post("/generate")
+#async def generate(req: GenerateRequest):
+#    raise Exception("Internal test error")
 
 #Test
