@@ -8,16 +8,25 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
+const axios_1 = require("@nestjs/axios");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
-const generate_controller_1 = require("./generate/generate.controller");
+const generate_module_1 = require("./generate/generate.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [],
-        controllers: [app_controller_1.AppController, generate_controller_1.GenerateController],
+        imports: [
+            config_1.ConfigModule.forRoot({
+                isGlobal: true,
+                envFilePath: process.env.NODE_ENV === 'production' ? undefined : '.env',
+            }),
+            axios_1.HttpModule,
+            generate_module_1.GenerateModule,
+        ],
+        controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
 ], AppModule);

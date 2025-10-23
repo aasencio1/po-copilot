@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": ["packages/core/src/*"],
+      "@po-copilot/core": ["packages/core/src/index.ts"],
+      "@po-copilot/core/*": ["packages/core/src/*"],
+      "@po-copilot/rules/*": ["packages/rules/src/*"],
+      "@po-copilot/generators/*": ["packages/generators/src/*"],
+      "@po-copilot/exporters/*": ["packages/exporters/src/*"]
+    }
+  },
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/rules" },
+    { "path": "packages/generators" },
+    { "path": "packages/exporters" },
+    { "path": "apps/api" }
+  ]
+}
