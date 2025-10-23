@@ -22,7 +22,7 @@ app = FastAPI()
 def health():
     return {"ok": True, "service": "po-copilot-nlu"}
 
-@app.post("/analyze")
+@app.post("/analyze", deprecated=True)
 def analyze(req: AnalyzeRequest):
     # Versión mínima para Día 1: detecta dominio por palabras clave
     full = " ".join([n.text for n in req.notes]).lower()
