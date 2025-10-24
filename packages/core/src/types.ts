@@ -118,6 +118,14 @@ export interface GenerationContext {
 export function normalizeAC(ac: AcceptanceCriteria): ReadonlyArray<string> {
   if (Array.isArray(ac)) return ac;
   // Divide por líneas o por "- " como bullets simples; ajusta a tu formato
-  const lines = ac.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-  return lines.length ? lines : [ac];
+ const lines = (
+  typeof ac === 'string'
+    ? ac.split(/\r?\n/).map(s => s.trim())
+    : Array.from(ac).map(s => s.trim())
+).filter(Boolean);
+
+return lines.length
+  ? lines
+  : (typeof ac === 'string' && ac ? [ac] : []); // garantiza string[]
+
 }
