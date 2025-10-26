@@ -1,4 +1,5 @@
-import { PBI } from "@core/types";
+import type { PBI } from "@po-copilot/core";
+
 export const toGitHubIssuesJSON = (items: PBI[]) =>
   items.map(i => ({
     title: i.summary,

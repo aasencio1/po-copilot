@@ -1,6 +1,7 @@
 // packages/core/src/generators.ts
 
-import type { RuleContext } from "./rules";
+import type { RuleContext } from "./types.js";
+
 
 /**
  * Representa un artefacto generado por cualquier generator.
@@ -16,7 +17,7 @@ export interface Artifact {
 /**
  * Contrato que deben cumplir todos los generadores (PBIs, User Stories, Outcomes, etc.)
  */
-export interface Generator {
+export  interface Generator {
   id: string;
 
   /**

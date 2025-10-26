@@ -1,14 +1,14 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import type { RuleContext } from '@po-copilot/core';
 import { GenerateService } from './generate.service';
-import { GenerateRequestDto } from './dto/generate-request.dto';
 
-@Controller()
+@Controller('generate')
 export class GenerateController {
-  constructor(private readonly service: GenerateService) {}
+  constructor(private readonly svc: GenerateService) {}
 
-  @Post('generate')
-  async generate(@Body() dto: GenerateRequestDto) {
-    // El controller NO toca el microservicio: delega al service
-    return this.service.generate(dto);
+  @Post()
+  run(@Body() ctx: RuleContext) {
+    const md = this.svc.generate(ctx);
+    return { format: 'markdown', content: md };
   }
 }

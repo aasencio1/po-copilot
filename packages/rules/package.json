@@ -1,6 +1,7 @@
 {
-  "name": "@po-copilot/rules",
+   "name": "@po-copilot/rules",
   "version": "0.1.0",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -15,5 +16,9 @@
   },
   "devDependencies": {
     "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@po-copilot/core": "0.1.0"
   }
 }
+

@@ -1,4 +1,5 @@
-import type { GenerationContext, UserStory } from "@po-copilot/core";
+import { randomUUID } from "node:crypto";
+import type { GenerationContext, UserStory, RawNote } from "./types.js";
 import { inferMoSCoWPriority, inferKano } from "@po-copilot/rules";
 
 /**
@@ -9,7 +10,7 @@ export function generatePBI(ctx: GenerationContext): UserStory {
   // Texto base (producto, dominio o notas)
   const baseText =
     ctx?.description ||
-    ctx?.notes?.map(n => n.text).join(" ") ||
+    ctx?.notes?.map((n: RawNote) => n.text).join(" ") ||
     `${ctx.productName} ${ctx.domain}`;
 
   // Tokenizamos para usar los inferidores de reglas
@@ -20,9 +21,9 @@ export function generatePBI(ctx: GenerationContext): UserStory {
   const kano = inferKano(tokens);
 
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     epic: ctx?.epic ?? "General",
-    summary: `[${ctx.productName}] ${ctx.domain} feature`,
+    summary: `[${ctx.productName}] ${ctx.domain ?? "General"} feature`,
     description: ctx?.description ?? "Generated PBI description.",
     acceptanceCriteria: [
       "Given valid input data, when the user triggers the main action, then the system performs the expected behavior successfully.",
@@ -31,10 +32,10 @@ export function generatePBI(ctx: GenerationContext): UserStory {
     priority,
     kano,
     wsjf: Math.floor(Math.random() * 100), // valor WSJF simulado
-    labels: [ctx.domain, priority, kano],
-    domain: ctx.domain,
+    labels: [ctx.domain ?? "General", priority, kano],
+    domain: ctx.domain ?? "General",   // 👈 AQUÍ está el cambio clave
     trace: {
-      sources: ctx?.notes?.map(n => n.id) ?? [],
+      sources: ctx?.notes?.map((n: RawNote) => n.id) ?? [],
       stakeholders: [],
       decisions: []
     }

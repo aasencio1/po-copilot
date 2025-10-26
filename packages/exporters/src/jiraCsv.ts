@@ -1,6 +1,7 @@
-import { PBI } from "@core/types";
-import type { AcceptanceCriteria } from "@po-copilot/core";
+import type { PBI } from "@po-copilot/core";
+//import type { AcceptanceCriteria } from "@po-copilot/core";
 
+type AcceptanceCriteria = PBI['acceptanceCriteria'];
 // Escapa caracteres problemáticos para CSV
 const esc = (s: string) => {
   const needs = /[",\n]/.test(s);

@@ -1,4 +1,4 @@
-import { Rule, RuleContext } from '@po-copilot/core';
+import type { Rule, RuleContext } from '@po-copilot/core';
 
 export const MinNotesRule: Rule = {
   id: 'rules/min-notes',

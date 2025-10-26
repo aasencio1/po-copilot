@@ -112,6 +112,20 @@ export interface GenerationContext {
   notes?: ReadonlyArray<{ id: string; text: string }>;
 }
 
+export interface RuleContext {
+  productName?: string;
+  domain?: Domain;
+  persona?: string;
+  notes?: ReadonlyArray<RawNote>;
+  tokens?: string[];
+  warnings?: string[];
+
+  // posibles salidas enriquecidas por reglas
+  priority?: PriorityTag;
+  kano?: KanoTag;
+}
+
+
 /** ===== Helpers opcionales ===== */
 
 /** Normaliza AC a array para pipelines que lo requieran como bullets */
@@ -128,4 +142,43 @@ return lines.length
   ? lines
   : (typeof ac === 'string' && ac ? [ac] : []); // garantiza string[]
 
+}
+/** ===== Artifacts y contratos cross-package ===== */
+
+// (opcional) etiqueta de tipo para discriminar
+export type ArtifactKind = 'user_story' | 'pbi';
+
+/** Un Artifact es una unión de tus artefactos existentes con una "tag" kind */
+export type Artifact =
+  | ({ kind: 'user_story' } & UserStory)
+  | ({ kind: 'pbi' } & PBI);
+
+/** Contexto que consumen reglas/generators/exporters */
+/*export interface RuleContext extends GenerationContext {
+  persona?: string;
+  // notas enriquecidas (compatible hacia atrás con tu GenerationContext)
+  notes?: ReadonlyArray<{ id: string; text: string; language?: Language }>;
+}*/
+
+
+
+/** Contratos base para el pipeline (útiles en generators/exporters/rules) */
+export interface Generator {
+  id: string;
+  supports(ctx: RuleContext): boolean;
+  generate(ctx: RuleContext): Artifact[];
+}
+
+export interface Exporter {
+  export(artifacts: ReadonlyArray<Artifact>, ctx: RuleContext): string;
+}
+
+export interface RuleResult {
+  ok: boolean;
+  message?: string;
+}
+
+export interface Rule {
+  id: string;
+  run(ctx: RuleContext): RuleResult;
 }

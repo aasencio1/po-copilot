@@ -1,4 +1,4 @@
-import type { PriorityTag } from "@po-copilot/core/types";
+import type { PriorityTag } from "@po-copilot/core";
 
 /** Muy simple: detecta MUST/SHOULD/COULD/WONT por palabras clave */
 export function inferMoSCoWPriority(tokens: string[]): PriorityTag {

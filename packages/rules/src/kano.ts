@@ -1,4 +1,4 @@
-import type { KanoTag } from "@po-copilot/core/types";
+import type { KanoTag } from "@po-copilot/core";
 
 /** Heurística básica para modelo de Kano según palabras clave */
 export function inferKano(tokens: string[]): KanoTag {

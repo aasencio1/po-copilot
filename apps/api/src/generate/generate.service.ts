@@ -1,52 +1,42 @@
-// src/generate/generate.service.ts
-import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
-import { GenerateRequestDto } from './dto/generate-request.dto';
-
-type Canonical = {
-  product_name: string;
-  domain: string;
-  persona: string;
-  notes: { id: string; speaker: string; language: string; text: string }[];
-};
-
-function normalize(dto: GenerateRequestDto): Canonical {
-  // ✅ Día 3 solamente: NO uses project/industry/language
-  return {
-    product_name: dto.productName,
-    domain: dto.domain,
-    persona: dto.persona,
-    notes: dto.notes,
-  };
-}
+// apps/api/src/generate/generate.service.ts
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import type { Rule, RuleContext, Exporter, Generator as GenType } from '@po-copilot/core';
+import { RULES, GENERATORS, EXPORTER } from './generate.providers';
 
 @Injectable()
 export class GenerateService {
   private readonly logger = new Logger(GenerateService.name);
-  private readonly baseURL =
-    process.env.NLU_URL ?? 'http://127.0.0.1:8001';
 
-  constructor(private readonly http: HttpService) {}
+  constructor(
+    @Inject(RULES) private readonly rules: Rule[],
+    @Inject(GENERATORS) private readonly generators: GenType[],
+    @Inject(EXPORTER) private readonly exporter: Exporter,
+  ) {}
 
-  async generate(dto: GenerateRequestDto) {
-    const payload = normalize(dto);
-    const url = `${this.baseURL}/generate`;
-    this.logger.debug({ outgoingPayload: payload, url });
+  generate(ctx: RuleContext): string {
+    this.logger.debug('Generating artifacts with in-process pipeline');
 
-    try {
-      const { data } = await firstValueFrom(
-        this.http.post(url, payload, {
-          headers: { 'Content-Type': 'application/json' },
-          timeout: 10000,
-        }),
-      );
-      return data;
-    } catch (err: any) {
-      const status = err?.response?.status ?? HttpStatus.BAD_GATEWAY;
-      const details = err?.response?.data ?? err?.message ?? 'Unknown error';
-      this.logger.error('FastAPI call failed', details);
-      throw new HttpException({ message: 'FastAPI call failed', details }, status);
+    // (Opcional) aplicar reglas si ya las implementas:
+    // for (const rule of this.rules) rule.apply?.(ctx);
+
+    // Seleccionar generator compatible (o el primero por defecto)
+    const gen =
+      this.generators.find(g => (typeof g.supports === 'function' ? g.supports(ctx) : true)) ??
+      this.generators[0];
+
+    if (!gen) {
+      throw new Error('No generators registered');
     }
+
+    // Algunos generators devuelven Artifact[] directamente; otros podrían devolver un objeto.
+    const raw = gen.generate(ctx as any) as unknown;
+    const artifacts =
+      Array.isArray(raw)
+        ? raw
+        : (raw as any)?.artifacts ?? []; // tolerante si en el futuro retornas { artifacts, context }
+
+    // Exportar a Markdown (o lo que sea que exponga tu exporter activo)
+    const md = this.exporter.export(artifacts as any, ctx);
+    return md;
   }
 }

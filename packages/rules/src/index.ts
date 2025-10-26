@@ -1,3 +1,3 @@
-export * from "./moscow";
-export * from "./kano";
-export * from "./min-required.rule";
+export * from "./moscow.js";
+export * from "./kano.js";
+export * from "./min-required.rule.js";

@@ -6,7 +6,10 @@
       "@po-copilot/core": ["packages/core/src/index.ts"],
       "@po-copilot/core/*": ["packages/core/src/*"],
       "@po-copilot/rules/*": ["packages/rules/src/*"],
+
+      "@po-copilot/generators": ["packages/generators/src/index.ts"],
       "@po-copilot/generators/*": ["packages/generators/src/*"],
+      "@po-copilot/exporters": ["packages/exporters/src/index.ts"],
       "@po-copilot/exporters/*": ["packages/exporters/src/*"]
     }
   },
